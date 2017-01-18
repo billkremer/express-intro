@@ -1,4 +1,4 @@
-$(function(){
+$(function(){ 
   console.log('document loaded');
 
   getSongs();

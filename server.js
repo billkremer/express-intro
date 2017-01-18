@@ -20,9 +20,48 @@ app.get('/songs', function(req, res) {
 });
 
 app.post('/songs', function(req, res) {
+var isBlank = false; // assumes no blanks in form
+isBlank = checkIfBlank(req.body);
+
+  console.log(isBlank);
+
+var isDuplicate = false // assumes not a duplicate
+isDuplicate = checkIfDuplicate(req.body, songs);
+  console.log(isDuplicate,"duplicate");
+//     songs.push(req.body);
+//     res.sendStatus(200);
+//
+
+
   console.log('req.body', req.body);
-  songs.push(req.body);
-  res.sendStatus(200);
+console.log(songs);
+
 })
+
+
+function checkIfBlank (currentSong) {
+// returns true if one is blank, false if none.
+return (currentSong.title == "" || currentSong.artist == "" || currentSong.album == "")
+
+};
+
+function checkIfDuplicate (currentSong, songs) {
+var isDup = false;
+
+// returns true if there is a duplicate
+// duplicates are songs with the same artist, title, and album.
+// console.log('insideCheckifDuplicate');
+// console.log(songs + 'songs');
+  songs.forEach( function (temp) {
+    // console.log((currentSong.title == temp.title && currentSong.artist == temp.artist && currentSong.album == temp.album));
+
+    if (currentSong.title == temp.title && currentSong.artist == temp.artist && currentSong.album == temp.album) {
+      isDup = true;
+    };
+  });
+  return isDup;
+};
+
+
 
 app.listen(3000);
