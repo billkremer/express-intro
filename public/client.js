@@ -37,4 +37,7 @@ function displaySongs(songs) {
     $('#songs').append('<li>' + song.title + ' by '
       + song.artist + ' from album ' + song.album + '.  Added: ' + song.dateAdded + '</li>');
   });
+
+    $('form').find('input[type=text]').val('');  // resets all text to empty string
+
 }
