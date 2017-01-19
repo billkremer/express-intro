@@ -25,17 +25,42 @@ function addSong(event) {
     url: '/songs',
     type: 'POST',
     data: songData,
-    success: getSongs
+    success: getSongs,
+    error: displayError
   })
-}
+};
+
+function displayError (response) {
+  console.log('error resp', response);
+  $('#errormessage').text('Could not add song: ' + response.responseText);
+
+};
+
 
 function displaySongs(songs) {
   $('#songs').empty(); //clears previous songs
 
   songs.forEach(function(song) {
-    // var dateFormatted = song.dateAdded.toLocaleString('en-US');
+     var dateFormatted =  "unknown date.";
+
+   if (song.dateAdded) {
+     dateFormatted = new Date(song.dateAdded).toDateString();
+   }; // checks to make sure song.dateAdded is valid, otherwise "unknown"
+
+// console.log(dateFormatted + 'dateFormatted');
+//         console.log(dateFormatted == undefined);
+//
+//     if (dateFormatted == undefined) {
+//          dateFormatted = new Date().toUTCString();
+//
+//     dateFormatted = '  Added: ' + dateFormatted;
+//     };
+// this was a bit of code to remove the added part if the date is undefined.
+
+
+
     $('#songs').append('<li>' + song.title + ' by '
-      + song.artist + ' from album ' + song.album + '.  Added: ' + song.dateAdded + '</li>');
+      + song.artist + ' from album ' + song.album + '. Added on: ' + dateFormatted + '</li>');
   });
 
     $('form').find('input[type=text]').val('');  // resets all text to empty string

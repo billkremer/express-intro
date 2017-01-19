@@ -7,9 +7,12 @@ var songs = require('./data.json');
 var app = express();
 
 app.use(express.static('public'));
+
 // convert any url encoded body into a JS object
 // added to req.body
 app.use(bodyParser.urlencoded({extended: true}));
+
+
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/index.html'));
@@ -26,14 +29,28 @@ app.post('/songs', function(req, res) {
   var isDuplicate = false // assumes not a duplicate
   isDuplicate = checkIfDuplicate(req.body, songs);
 
-  if (isBlank || isDuplicate) { // if either are true, send failure
-    res.sendStatus(400);
+  if (isDuplicate) {
+    res.status(400).send('Duplicate Song');
+
+  } else if (isBlank) {
+    res.status(400).send('Incomplete Fields');
 
   } else {
-    req.body.dateAdded = new Date().toLocaleString('en-US');
+    // before pushing to songs, we want to add the current date
+    // req.body.dateAdded = new Date().toLocaleString('en-US');
+    req.body.dateAdded = new Date().toDateString(); // looks nicer
     songs.push(req.body);
     res.sendStatus(200);
   };
+
+  // if (isBlank || isDuplicate) { // if either are true, send failure
+  //   res.sendStatus(400);
+  //
+  // } else {
+  // req.body.dateAdded = new Date().toLocaleString('en-US');
+  // songs.push(req.body);
+  // res.sendStatus(200);
+  // };
 });
 
 
@@ -50,10 +67,17 @@ function checkIfDuplicate (currentSong, songs) {
 var isDup = false;
 // returns true if there is a duplicate
 // duplicates are songs with the same artist, title, and album.
-  songs.forEach( function (temp) {
-    if (currentSong.title == temp.title && currentSong.artist == temp.artist && currentSong.album == temp.album) {
-      isDup = true;
-    };
-  });
-  return isDup;
+
+  return songs.some(function (temp) { // .some can be broken out of!
+    return currentSong.title == temp.title && currentSong.artist == temp.artist && currentSong.album == temp.album;
+  });  // breaks when true, but still need a second return if false
+
+
+  // this was my function and return statements.
+  // songs.forEach( function (temp) {
+  //   if (currentSong.title == temp.title && currentSong.artist == temp.artist && currentSong.album == temp.album) {
+  //     isDup = true;
+  //   };
+  // });
+  // return isDup;
 };
